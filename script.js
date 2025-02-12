@@ -1,2 +1,10 @@
-const a = 1
-let b = "вторая переменная"
+const a = 1;
+let b = "вторая переменная";
+let title = 0;
+let screens = 0;
+let screenPrice = 0;
+let rollback = 0;
+let fullPrice = 0;
+let adaptive = 0;
+alert("Первый урок по js");
+console.log("JS");
