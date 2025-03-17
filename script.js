@@ -1,5 +1,5 @@
 'use strict';
-
+//БЛОК ОБЪЯВЛЕНИЯ
 // Присвоить значения 
 let title = prompt('Как называется Ваш проект?');
 let screens = prompt('Какие типы экранов нужно разработать?');
@@ -23,7 +23,7 @@ const strs = "Стоимость разработки сайтов " + " " + ful
 
 
 
-//Конструкции условий 
+//БЛОК ОПИСАНИЯ ФУНКЦИЙ 
 let getAllServicePrices = function (servicePrice1, servicePrice2) {
   return servicePrice1 + servicePrice2;
 }
@@ -65,7 +65,7 @@ fullPrice = getFullPrice(screenPrice, allServicePrices);
 title = getTitle(title);
 servicePercentPrice = getServicePercentPrices(fullPrice, perOfRoll);
 
-// Вывести в консоль 
+//БЛОК ВЫВОДА
 showTypeOf(title);
 showTypeOf(screenPrice);
 showTypeOf(adaptive);
