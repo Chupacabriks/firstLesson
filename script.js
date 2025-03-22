@@ -9,13 +9,15 @@ let service1 = prompt('Какой дополнительный тип услуг
 let servicePrice1 = +prompt('Сколько это будет стоить?');
 let service2 = prompt('Какой дополнительный тип услуги нужен?');
 let servicePrice2 = +prompt('Сколько это будет стоить?');
-let rollback = 72;
+
 let allServicePrices;
 let servicePercentPrice;
+
+const rollback = 72;
 // Вычислить итоговую стоимость работы 
 let fullPrice = screenPrice + servicePrice1 + servicePrice2;
 
-let perOfRoll = (fullPrice * (rollback / 100));
+const rebatePercentage = (fullPrice * (rollback / 100));
 
 
 const stre = "Стоимость верстки экранов" + " " + screenPrice + " " + "миллионов долларов";
@@ -24,7 +26,7 @@ const strs = "Стоимость разработки сайтов " + " " + ful
 
 
 //БЛОК ОПИСАНИЯ ФУНКЦИЙ 
-let getAllServicePrices = function (servicePrice1, servicePrice2) {
+const getAllServicePrices = function (servicePrice1, servicePrice2) {
   return servicePrice1 + servicePrice2;
 }
 
@@ -34,13 +36,13 @@ function getFullPrice(screenPrice, allServicePrices) {
   return screenPrice + allServicePrices;
 }
 
-let getTitle = function (title) {
+const getTitle = function (title) {
   let string = title.trim().toLowerCase();
   return (title = string.charAt(0).toUpperCase() + string.slice(1));
 }
 
-let getServicePercentPrices = function (fullPrice, perOfRoll) {
-  return Math.ceil(fullPrice - perOfRoll);
+const getServicePercentPrices = function (fullPrice, rebatePercentage) {
+  return Math.ceil(fullPrice - rebatePercentage);
 }
 
 const showTypeOf = function (variable) {
@@ -63,7 +65,7 @@ const getRollBackMessage = function (price) {
 allServicePrices = getAllServicePrices(servicePrice1, servicePrice2);
 fullPrice = getFullPrice(screenPrice, allServicePrices);
 title = getTitle(title);
-servicePercentPrice = getServicePercentPrices(fullPrice, perOfRoll);
+servicePercentPrice = getServicePercentPrices(fullPrice, rebatePercentage);
 
 //БЛОК ВЫВОДА
 showTypeOf(title);
