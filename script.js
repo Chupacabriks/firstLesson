@@ -3,57 +3,105 @@
 
 const appData = {
   title: '',
-  screens: '',
-  screenPrice: 0,
   adaptive: true,
+  screenPrice: 0,
   fullPrice: 0,
   allServicePrices: 0,
   servicePercentPrice: 0,
-  service1: '',
-  service2: '',
   rollback: 10,
+  services: {}, // по-умолчанию объект{}
+  screens: [], // массив[]
 
   start: function () {
     this.asking(),
-      this.allServicePrices = this.getAllServicePrices(),
-      this.fullPrice = this.getFullPrice(),
+      this.getAllServicePrices(),
+      this.getFullPrice(),
       this.getRollBackMessage(),
-      this.servicePercentPrice = this.getServicePercentPrices(),
-      this.title = this.getTitle(),
+      this.getServicePercentPrices(),
+      this.getTitle(),
       this.logger()
   },
 
   asking: function () {
-    this.title = prompt('Как называется Ваш проект?', 'Калькулятор верстки');
-    this.screens = prompt('Какие типы экранов нужно разработать?', 'Простые и сложные');
     do {
-      this.screenPrice = prompt('Сколько будет стоить данная работа?');
-      if (this.screenPrice !== null) {
-        this.screenPrice = this.screenPrice.trim();
+      this.title = prompt('Как называется Ваш проект?');
+      // Удаляем пробелы в начале и конце
+      const trimTitle = this.title.trim();
+      // Проверка на отмену ввода (если пользователь нажал "Отмена")
+      if (this.title === null || trimTitle === '') {
+        alert('Проект без названия')
+        this.title = "Без названия";
+        break;
+      };
+
+      // Проверка, что строка не состоит только из цифр
+      if (/^[\d\s]+$/.test(trimTitle)) {
+        alert('Название не может содержать только цифры');
+        continue; // Переходим к следующей итерации цикла
       }
-    } while (!this.isNumber(this.screenPrice));
-    this.adaptive = confirm('Нужен ли адаптив на сайте?');
-  },
 
-  //проверка числа
-  isNumber: function (num) {
-    return !isNaN(parseFloat(num)) && isFinite(num);
-  },
+      // Если все проверки пройдены - сохраняем и выходим из цикла
+      this.title = trimTitle;
+      break;
 
-  getTitle: function () {
-    let string = this.title.trim().toLowerCase();
-    return (this.title = string.charAt(0).toUpperCase() + string.slice(1));
-  },
+    } while (true); // Бесконечный цикл, пока не получим корректный ввод
 
-  getAllServicePrices: function () {
-    let sum = 0;
+
+
     for (let i = 0; i < 2; i++) {
+      let name;
+      do {
+        name = prompt('Какие типы экранов нужно разработать?');
+        if (name === null || name.trim() === '') {
+          alert('Введите тип экрана');
+        }
+        if (/^[\d\s]+$/.test(name.trim())) {
+          alert('Строка не может содержать только цифры');
+          continue;
+        }
+      } while (name === null || name.trim() === '' || /^[\d\s]+$/.test(name.trim()));
+
       let price = 0;
-      if (i === 0) {
-        this.service1 = prompt('Какой дополнительный тип услуги нужен?');
-      } else if (i === 1) {
-        this.service2 = prompt('Какой дополнительный тип услуги нужен?');
+      do {
+        price = prompt('Сколько будет стоить данная работа?');
+        if (price !== null) {
+          price = price.trim();
+        }
+      } while (!this.isNumber(price));
+
+      this.screens.push({ id: i, name: name, price: price }); // метод.push для работы с массивами. добавляет элемент в конец массива. с помощью {} сохраняем именно объекта со свойствами id name price
+    }
+
+
+    //УСЛОЖНЕННОЕ ЗАДАНИЕ
+    this.screenPrice = this.screens.reduce(function (sum, screen) {
+      return sum + Number(screen.price);
+    }, 0); //через метод .reduce выводим сумму экранов
+
+
+    for (let i = 0; i < 2; i++) {
+      let name;
+      let addService = true;//создаем новую переменную по-умолчанию тру, нужна, чтобы создать новое условие для вывода цены. если эта переменная станет фолс, то вопрос о цене не будет задан
+      do {
+        name = prompt('Какой дополнительный тип услуги нужен?');
+        if (name === null || name.trim() === '') {
+          alert('Дополнительная услуга не требуется');
+          addService = false;
+          break
+        }
+        if (/^[\d\s]+$/.test(name.trim())) {
+          alert('Строка не может содержать только цифры');
+          continue;
+        }
+      } while (/^[\d\s]+$/.test(name.trim()));
+
+      if (!addService) { //в этом случае переменная не равна тру, т е мы пропускаем вопрос о цене
+        continue;
       }
+
+
+      let price = 0;
+
       do {
         price = prompt('Сколько это будет стоить?');
         if (price === null || price.trim() === '') {
@@ -62,17 +110,45 @@ const appData = {
         }
         price = price.trim();
       } while (!this.isNumber(price));
-      sum += +price;
+
+
+      //УСЛОЖНЕННОЕ ЗАДАНИЕ
+      let key = name;//создаем переменную key, которая содержит название, т е ответ на вопрос о типе услуг
+      let counter = 1; //создаем переменную , содержащую окончание. по-умолчанию 1 
+      while (this.services.hasOwnProperty(key)) { //цикл проверяет есть ли уже в this.servicess ключ name, который ввел пользователь. если меод hasOwnProperty находит совпадение, то ключ меняется на - название + каунт, который увеличивается каждый раз на единицу ++
+      key = `${name}_${counter}`;
+        counter++;
+       }
+
+      this.services[name] = +price; //если проверка на число и на пустую строку или отмену пройдена в do while, то значение сохраняется в объекте this.services с ключом name. например, this.services = {"дизайн": 1000}. но, если оба раза в типе услуг записать одно и то же значение, то сохранится только одно - последнее.
     }
-    return sum;
+
+    this.adaptive = confirm('Нужен ли адаптив на сайте?');
+
+  },
+
+  //проверка числа
+  isNumber: function (num) {
+    return !isNaN(parseFloat(num)) && isFinite(num);
+  },
+
+  getTitle: function () {
+    this.title = this.title.trim()[0].toUpperCase() + this.title.trim().slice(1).toLowerCase();
+  },
+
+  getAllServicePrices: function () {
+    this.allServicePrices = 0;
+    for (let key in this.services) {
+      this.allServicePrices += this.services[key]
+    }
   },
 
   getFullPrice: function () {
-    return +this.screenPrice + this.allServicePrices;
+    this.fullPrice = +this.screenPrice + this.allServicePrices;
   },
 
   getServicePercentPrices: function () {
-    return this.fullPrice - (this.fullPrice * (this.rollback / 100));
+    this.servicePercentPrice = this.fullPrice - (this.fullPrice * (this.rollback / 100));
   },
 
   getRollBackMessage: function (price) {
@@ -90,10 +166,12 @@ const appData = {
   logger: function () {
     console.log(this.getRollBackMessage(this.fullPrice)); //скидка пользователю 
     console.log('Итоговая стоимость: ' + this.servicePercentPrice);//итоговая стоимость
+    console.log(this.screens);
+    console.log('Общая стоимость экранов:' + this.screenPrice);
 
-    for (let key in this) {
-      console.log("Ключ:" + key + "Значение:" + this[key])
-    }
+    // for (let key in this) {
+    //   console.log("Ключ:" + key + "Значение:" + this[key])
+    // }
   }
 };
 
